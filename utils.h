@@ -5,6 +5,9 @@
 #ifndef SCZR_UTILS_H
 #define SCZR_UTILS_H
 
+char* decryptMessage(*char);
+char* prepareMessage(*char);
+char* loadMessage(*char, int length);
 
 
 
