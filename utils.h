@@ -8,7 +8,7 @@
 #include <time.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <math.h>
+//#include <math.h>
 
 char* hashMessage(char*);
 
@@ -18,12 +18,12 @@ typedef struct{
     //int time; - 3 timery
 }message;
 
-
-char * generateMessage(int length)
+int poww(int,int);
+void generateMessage(int length,char * message)
 {
 	
     srand(time(NULL));
-    char message[length];
+    //char message[length];
    
     for( int i = 0; i < length; i++ )
     {
@@ -31,15 +31,15 @@ char * generateMessage(int length)
     } 
 	//printf("%s", message);
    
-    return message;
+    //return message;
 }
 
-char * decryptMessage(char *  message, int length)
+void decryptMessage(char *  message, int length,char * result)
 {
 
-    char  result[]="aaaaaaaaa";
+    //char  result[]="aaaaaaaaa";
     int i,j=0;
-    for ( i = 0; i < pow(25,length) ; ++i)
+    for ( i = 0; i < poww(25,length) ; ++i)
     {
 
         //tu porówn
@@ -58,7 +58,19 @@ char * decryptMessage(char *  message, int length)
             while(j!=0) result[--j]='a';
         }
     }
-    return result;
+    //return result;
+}
+
+int poww(int x,int y)
+{
+	int result=1;
+	int i=0;
+	for(i=0;i<y;i++)
+	{
+		result*=x;
+	}
+	return result;
+	
 }
 
 
