@@ -4,20 +4,20 @@
 #include <sys/shm.h>
 #include <string.h>
 #include <unistd.h>
-
+#include "../utils.h"
 
 
 
 int main()
 {
 	
-	int * message;
+	Komunikat * message;
 	int message_Id;
 	int semId;
 	char exit;
 
-	message_Id = shmget(2137 , sizeof(Message), IPC_CREAT|0666);
-	message = (int*)shmat(message_Id,NULL,0);
+	message_Id = shmget(2137 , sizeof(Komunikat), IPC_CREAT|0666);
+	message = (Komunikat*)shmat(message_Id,NULL,0);
 	//semafory
 	semId = semget(2137, 3, IPC_CREAT|IPC_EXCL|0600);
     semctl(semId, 0, SETVAL, (int)1); //mutex 
