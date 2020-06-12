@@ -6,7 +6,7 @@
 #include <errno.h>
 #include <mqueue.h>
 #include <sys/time.h>
-#include "utils.h"
+#include "../utils.h"
 #include "common.h"
 
 
@@ -29,34 +29,30 @@ int main(int argc, char **argv)
     CHECK((mqd_t)-1 != mq);
 
 	struct timeval tv;
-	char  result[]="aaaa";
+	char  result[]="aaaaa";
 
 	Komunikat kom;
 
 
-
-    int must_stop = 0;
-    do {
+    while(1) {
         ssize_t bytes_read;
 
         /* receive the message */
         bytes_read = mq_receive(mq, (char *) &kom, sizeof(Komunikat), NULL);
         CHECK(bytes_read >= 0);
+        printf("Received: %d\n", kom.dane);
 
-
-        if (! strncmp(kom.dane, MSG_STOP, strlen(MSG_STOP)))
-        {
-            must_stop = 1;
-        }
-        else
-        {
+	//Obliczanie czasu przesylania 
 	gettimeofday(&tv, NULL);
 	kom.czasDostarczenia = ((tv.tv_sec) * 1000 + (tv.tv_usec) / 1000) - kom.czasDostarczenia;
+	printf(" time: %ld\n", kom.czasDostarczenia);
+
+	//Przetwarzanie danych
 	decryptMessage(kom.dane, 4, result);
-            printf("Received: %s\n", kom.dane);
-			printf(" time: %ld\n", kom.czasDostarczenia);
-        }
-    } while (!must_stop);
+
+
+	printf("%s\n", result);
+    }
 
     /* cleanup */
     CHECK((mqd_t)-1 != mq_close(mq));
