@@ -16,7 +16,7 @@
 
 typedef struct Komunikat
 {
-  int time;
+  long czasDostarczenia;
   char dane[MAX_SIZE];
 } Komunikat;
 
