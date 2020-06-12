@@ -88,13 +88,20 @@ int sched_getattr(pid_t pid,
 int poww(int,int);
 void generateMessage(int length,char * message)
 {
-	
-    srand(time(NULL));
+    int r;
+    struct timespec ts;
+    if (timespec_get(&ts, TIME_UTC) == 0) {
+    /* Handle error */
+    }
+    srandom(ts.tv_nsec ^ ts.tv_sec);
+    r = random();
+    
     //char message[length];
    
     for( int i = 0; i < length; i++ )
     {
-        message[i] = 'a' + rand() % 26;   
+	r = random();
+        message[i] = 'a' + r % 26;   
     } 
 	//printf("%s", message);
    
