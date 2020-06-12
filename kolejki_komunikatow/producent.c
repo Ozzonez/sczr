@@ -5,31 +5,36 @@
 #include <sys/types.h>
 #include <mqueue.h>
 
-#define QUEUE_NAME  "/prod_q"
-#define MAX_SIZE    10
+#include "common.h"
 
 
 int main(int argc, char **argv)
 {
-    mqd_t mq;
-    char produkowane_dane[MAX_SIZE];
-
     /* open the mail queue */
+    mqd_t mq;
     mq = mq_open(QUEUE_NAME, O_WRONLY);
+    CHECK((mqd_t)-1 != mq);
 
 
-    while(1) {
-		//te dwie linijki symuluja produkowanie danych
-		//trzeba bedzie je podmienic na funckje produkujaca
-        memset(produkowane_dane, 0, MAX_SIZE);
-        fgets(produkowane_dane, MAX_SIZE, stdin);
+    printf("Send to server (enter \"exit\" to stop it):\n");
+
+	Komunikat kom;
+
+    do {
+        printf("> ");
+        fflush(stdout);
+
+        memset(kom.dane, 0, MAX_SIZE);
+        fgets(kom.dane, MAX_SIZE, stdin);
+		kom.time = 7;
 
         /* send the message */
-		mq_send(mq, produkowane_dane, MAX_SIZE, 0);
-    }
+        CHECK(0 <= mq_send(mq, (const char *) &kom, sizeof(Komunikat), 0));
+
+    } while (strncmp(kom.dane, MSG_STOP, strlen(MSG_STOP)));
 
     /* cleanup */
-	mq_close(mq);
+    CHECK((mqd_t)-1 != mq_close(mq));
 
     return 0;
 }
