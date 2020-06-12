@@ -18,6 +18,7 @@
 #include <sys/resource.h>
 #include <sys/syscall.h>
 #include <unistd.h>
+#define MAX_SIZE    1024
 
 #ifdef __x86_64__
 #define __NR_sched_setattr		314
@@ -86,8 +87,9 @@ int sched_getattr(pid_t pid,
 
 
 int poww(int,int);
-void generateMessage(int length,char * message)
+int generateMessage(int length)
 {
+    
     int r;
     struct timespec ts;
     if (timespec_get(&ts, TIME_UTC) == 0) {
@@ -96,7 +98,7 @@ void generateMessage(int length,char * message)
     srandom(ts.tv_nsec ^ ts.tv_sec);
     r = random();
     
-    //char message[length];
+    char message[length];
    
     for( int i = 0; i < length; i++ )
     {
@@ -105,11 +107,10 @@ void generateMessage(int length,char * message)
     } 
 	//printf("%s", message);
    
-    //return message;
+    return hash(message);
 }
 
-void decryptMessage(char *  message, int length,char * result)
-{
+void decryptMessage(int message, int length,char * result){
 
     //char  result[]="aaaaaaaaa";
     int i,j=0;
@@ -117,7 +118,7 @@ void decryptMessage(char *  message, int length,char * result)
     {
 
         //tu porówn
-        if(strcmp(result,message)==0)
+        if(hash(result, length) == message)
         {
             printf("%s\n",result);
             break;
@@ -146,6 +147,30 @@ int poww(int x,int y)
 	return result;
 	
 }
+
+int hash ( char * x ,int length)
+{
+  int i,hx=0,a='a';
+  for( i = 0; i < length; i++ )
+    {
+        hx+=x[i]*pow(25,length-i);
+
+
+    }
+
+ 
+
+  return hx%100000003;
+}
+
+typedef struct Komunikat
+{
+  long czasDostarczenia; // czas wyslania
+  long czasRozpPrzetw;
+  long czasZakPrzetw;
+  int dane[MAX_SIZE];
+} Komunikat;
+
 
 
 #endif //SCZR_UTILS_H

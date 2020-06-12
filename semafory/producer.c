@@ -49,10 +49,10 @@ int main()
 	char  message[]="aaaa"; 
 	struct timeval tv;
 	//pamiec
-	message_Id = shmget(2137 , sizeof(Komunikat), 0666);
+	message_Id = shmget(2138 , sizeof(Komunikat), 0666);
 	kom = (Komunikat*)shmat(message_Id,NULL,0);
 	//semafor
-	semId = semget(2137, 3, 0600);
+	semId = semget(2138, 3, 0600);
     int i=0;
     while(1)
     {

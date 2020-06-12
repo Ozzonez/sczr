@@ -16,10 +16,10 @@ int main()
 	int semId;
 	char exit;
 
-	message_Id = shmget(2137 , sizeof(Komunikat), IPC_CREAT|0666);
+	message_Id = shmget(2138 , sizeof(Komunikat), IPC_CREAT|0666);
 	message = (Komunikat*)shmat(message_Id,NULL,0);
 	//semafory
-	semId = semget(2137, 3, IPC_CREAT|IPC_EXCL|0600);
+	semId = semget(2138, 3, IPC_CREAT|IPC_EXCL|0600);
     semctl(semId, 0, SETVAL, (int)1); //mutex 
 	semctl(semId, 1, SETVAL, (int)0); //empty czytanie z pustej
 	semctl(semId, 2, SETVAL, (int)1); //pisanie do pelnej full 

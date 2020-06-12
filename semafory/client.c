@@ -46,10 +46,11 @@ int main(int argc,char * argv)
 	int semId;
 struct timeval tv;
 	//pamiec
-	message_Id = shmget(2137 , sizeof(Komunikat), 0666);
+	message_Id = shmget(2138 , sizeof(Komunikat), 0666);
 	kom = (Komunikat*)shmat(message_Id,NULL,0);
 	//semafor
-	semId = semget(2137, 3, 0600);
+	semId = semget(2138, 3, 0600);
+	char result[] = "aaaa";
 
 	while (1)
 	{
@@ -61,8 +62,13 @@ struct timeval tv;
 		
    	
 			gettimeofday(&tv, NULL);
-			//kom->czasDostarczenia = (tv.tv_sec) * 1000 + (tv.tv_usec) / 1000;
-			printf("pobrano -> %s\n",kom->dane);
+			kom->czasRozpPrzetw = (tv.tv_sec) * 1000 + (tv.tv_usec) / 1000;
+			
+			decryptMessage(kom->dane, 4, result);
+			kom->czasZakPrzetw = (tv.tv_sec) * 1000 + (tv.tv_usec) / 1000;
+			fflush(stdout);
+			printf("pobrano -> %s\n",result);
+			// wysylanie do archiwizatora
 
 		sem_up(semId,MUTEXID);
 		sem_up(semId,EMPTYID);
