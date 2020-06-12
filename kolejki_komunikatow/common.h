@@ -13,11 +13,5 @@
             exit(-1); \
         } \
     } while (0) \
-
-typedef struct Komunikat
-{
-  long czasDostarczenia;
-  char dane[MAX_SIZE];
-} Komunikat;
-
+    
 #endif /* #ifndef COMMON_H_ */
