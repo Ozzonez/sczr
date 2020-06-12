@@ -168,7 +168,7 @@ typedef struct Komunikat
   long czasDostarczenia; // czas wyslania
   long czasRozpPrzetw;
   long czasZakPrzetw;
-  int dane[MAX_SIZE];
+  int dane;
 } Komunikat;
 
 
