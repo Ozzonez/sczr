@@ -5,7 +5,8 @@
 #include <sys/types.h>
 #include <errno.h>
 #include <mqueue.h>
-
+#include <sys/time.h>
+#include "utils.h"
 #include "common.h"
 
 
@@ -27,7 +28,12 @@ int main(int argc, char **argv)
     mq = mq_open(QUEUE_NAME, O_CREAT | O_RDONLY, 0644, &attr);
     CHECK((mqd_t)-1 != mq);
 
+	struct timeval tv;
+	char  result[]="aaaa";
+
 	Komunikat kom;
+
+
 
     int must_stop = 0;
     do {
@@ -44,8 +50,11 @@ int main(int argc, char **argv)
         }
         else
         {
+	gettimeofday(&tv, NULL);
+	kom.czasDostarczenia = ((tv.tv_sec) * 1000 + (tv.tv_usec) / 1000) - kom.czasDostarczenia;
+	decryptMessage(kom.dane, 4, result);
             printf("Received: %s\n", kom.dane);
-			printf(" time: %d\n", kom.time);
+			printf(" time: %ld\n", kom.czasDostarczenia);
         }
     } while (!must_stop);
 
