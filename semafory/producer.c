@@ -46,7 +46,7 @@ int main()
 	
 	int message_Id;
 	int semId;
-	char  message[]="aaaa"; 
+	int message;
 	struct timeval tv;
 	//pamiec
 	message_Id = shmget(2138 , sizeof(Komunikat), 0666);
@@ -57,7 +57,7 @@ int main()
     while(1)
     {
 
-       	generateMessage(4,message);
+       	message = generateMessage(4);
 		
 	sem_down(semId,EMPTYID);
 	sem_down(semId,MUTEXID);
@@ -66,7 +66,7 @@ int main()
    	
 	gettimeofday(&tv, NULL);
 	kom->czasDostarczenia = (tv.tv_sec) * 1000 + (tv.tv_usec) / 1000;
-	strcpy(kom->dane,message);
+	kom->dane = message;
 
 
 	sem_up(semId,MUTEXID);
