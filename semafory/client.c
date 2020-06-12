@@ -2,7 +2,7 @@
 
 int main(int argc,char * argv)
 {
-	printf("dupa ");
+	printf("hello client ");
 
 return 0;
 
