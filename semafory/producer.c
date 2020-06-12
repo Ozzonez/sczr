@@ -1,8 +1,11 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdint.h>
 #include <sys/sem.h>
 #include <sys/shm.h>
+#include <sys/time.h>
 #include <unistd.h>
+#include "../utils.h"
 
 #define EMPTYID 1
 #define MUTEXID 0
@@ -39,26 +42,35 @@ void sem_up(int semid, int semnum)
 
 int main()
 {
-	int * message;
+	Komunikat * kom;
+	
 	int message_Id;
 	int semId;
+	char  message[]="aaaa"; 
+	struct timeval tv;
 	//pamiec
-	message_Id = shmget(2137 , sizeof(Message), 0666);
-	message = (int*)shmat(message_Id,NULL,0);
+	message_Id = shmget(2137 , sizeof(Komunikat), 0666);
+	kom = (Komunikat*)shmat(message_Id,NULL,0);
 	//semafor
 	semId = semget(2137, 3, 0600);
     int i=0;
     while(1)
     {
 
-        sem_down(semId,EMPTYID);
-		sem_down(semId,MUTEXID);
+       	generateMessage(4,message);
+		
+	sem_down(semId,EMPTYID);
+	sem_down(semId,MUTEXID);
 
-		//tu wysylanie
-        *message = i++;
+	//tu wysylanie
+   	
+	gettimeofday(&tv, NULL);
+	kom->czasDostarczenia = (tv.tv_sec) * 1000 + (tv.tv_usec) / 1000;
+	strcpy(kom->dane,message);
 
-		sem_up(semId,MUTEXID);
-		sem_up(semId,FULLID);
+
+	sem_up(semId,MUTEXID);
+	sem_up(semId,FULLID);
 
     }
 return 0;
