@@ -3,8 +3,9 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <sys/time.h>
 #include <mqueue.h>
-
+#include "utils.h"
 #include "common.h"
 
 
@@ -19,14 +20,14 @@ int main(int argc, char **argv)
     printf("Send to server (enter \"exit\" to stop it):\n");
 
 	Komunikat kom;
+	strcpy(kom.dane, "jp2g");
+	struct timeval tv;
+
 
     do {
-        printf("> ");
-        fflush(stdout);
-
-        memset(kom.dane, 0, MAX_SIZE);
-        fgets(kom.dane, MAX_SIZE, stdin);
-		kom.time = 7;
+        generateMessage(4, kom.dane);
+	gettimeofday(&tv, NULL);
+	kom.czasDostarczenia = (tv.tv_sec) * 1000 + (tv.tv_usec) / 1000;
 
         /* send the message */
         CHECK(0 <= mq_send(mq, (const char *) &kom, sizeof(Komunikat), 0));
