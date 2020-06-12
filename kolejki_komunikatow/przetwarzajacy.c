@@ -6,44 +6,52 @@
 #include <errno.h>
 #include <mqueue.h>
 
-#define QUEUE_NAME  "/prod_q"
-#define MAX_SIZE    10
+#include "common.h"
+
 
 int main(int argc, char **argv)
 {
-    char odebrane_dane[MAX_SIZE + 1];	//+1 ze wzgledu na znak konca stringa
-    char przetworzone_dane[MAX_SIZE + 1];
-
-    mqd_t mq;
-    struct mq_attr attr;
+	// Trzeba usuwac pozostale w systemie kolejki o tej samej nazwie, zeby nie bylo bledow
+	if(mq_unlink(QUEUE_NAME) == 0)
+		fprintf(stdout, "Message queue %s removed from system.\n", QUEUE_NAME);
 
     /* initialize the queue attributes */
+    mqd_t mq;
+    struct mq_attr attr;
     attr.mq_flags = 0;
     attr.mq_maxmsg = 10;
-    attr.mq_msgsize = MAX_SIZE;
+    attr.mq_msgsize = sizeof(Komunikat);
     attr.mq_curmsgs = 0;
 
     /* create the message queue */
     mq = mq_open(QUEUE_NAME, O_CREAT | O_RDONLY, 0644, &attr);
+    CHECK((mqd_t)-1 != mq);
 
-    ssize_t bytes_read;
-    while(1) {
+	Komunikat kom;
+
+    int must_stop = 0;
+    do {
+        ssize_t bytes_read;
+
         /* receive the message */
-        bytes_read = mq_receive(mq, odebrane_dane, MAX_SIZE, NULL);
+        bytes_read = mq_receive(mq, (char *) &kom, sizeof(Komunikat), NULL);
+        CHECK(bytes_read >= 0);
 
-        odebrane_dane[bytes_read] = '\0';
 
-		/* Dane zostaly odebrane, mozna je przetwarzac */
-        printf("Received: %s", odebrane_dane);
-
-		// Przetwarzanie
-
-		// Wysylanie przetworzonych danych do archiwizujacego
-    }
+        if (! strncmp(kom.dane, MSG_STOP, strlen(MSG_STOP)))
+        {
+            must_stop = 1;
+        }
+        else
+        {
+            printf("Received: %s\n", kom.dane);
+			printf(" time: %d\n", kom.time);
+        }
+    } while (!must_stop);
 
     /* cleanup */
-    mq_close(mq);
-    mq_unlink(QUEUE_NAME);
+    CHECK((mqd_t)-1 != mq_close(mq));
+    CHECK((mqd_t)-1 != mq_unlink(QUEUE_NAME));
 
     return 0;
 }
