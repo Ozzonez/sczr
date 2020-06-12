@@ -1,18 +1,23 @@
-#include<stdio.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <sys/sem.h>
+#include <sys/shm.h>
+#include <string.h>
 #include <unistd.h>
+
+
 
 
 int main()
 {
 	
-	Message * message;
+	int * message;
 	int message_Id;
 	int semId;
 	char exit;
 
 	message_Id = shmget(2137 , sizeof(Message), IPC_CREAT|0666);
-	message = (Message*)shmat(message_Id,NULL,0);
+	message = (int*)shmat(message_Id,NULL,0);
 	//semafory
 	semId = semget(2137, 3, IPC_CREAT|IPC_EXCL|0600);
     semctl(semId, 0, SETVAL, (int)1); //mutex 
