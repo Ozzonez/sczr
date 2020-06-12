@@ -1,19 +1,23 @@
 //Kod przetwarzajacego w przypadku komunikacji za pomoca potoku
 #include <stdio.h>
 #include <string.h>
+#include <sys/time.h>
+#include "utils.h"
+#include "common.h"
 
 int main() {
-  char otrzymane_dane[5+1]; 
-  char przetworzone_dane[5+1]; 
+  struct timeval tv;
+  char result[]="aaaa";
+  Komunikat kom;
 
   while(1){
- 	scanf ("%4s",otrzymane_dane); 
-	// przetworzone_dane = decrypt(otrzymane_dane);
-	
-	strcpy(przetworzone_dane, "decry");
+ 	scanf ("%4s, %ld", kom.dane, &kom.czasDostarczenia);
+	gettimeofday(&tv, NULL);
+	kom.czasDostarczenia = ((tv.tv_sec) * 1000 + (tv.tv_usec) / 1000) - kom.czasDostarczenia;
+	decryptMessage(kom.dane, 4, result);
 
-  	printf("%s", przetworzone_dane);
+  	printf("Received: %s\n", kom.dane);
+			printf(" time: %ld\n", kom.czasDostarczenia);
   }
   return 0;
 }
- 
